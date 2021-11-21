@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    Records Screen
+    <h3>Records Screen</h3>
+    
   </div>
 </template>
 
