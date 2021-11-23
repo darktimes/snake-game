@@ -63,10 +63,10 @@ export default class GameOptions extends Vue {
     const currentGameSpeedStr: string | null = localStorage.getItem("currentGameSpeed");
     const currentBoundariesLockedStr: string | null = localStorage.getItem("currentBoundariesLocked");
 
-    if (typeof currentGameSpeedStr != undefined && currentGameSpeedStr) {
+    if (typeof currentGameSpeedStr !== undefined && currentGameSpeedStr) {
       this.gameSpeedSliderData.value = +currentGameSpeedStr;
     }
-    if (typeof currentBoundariesLockedStr != undefined && currentBoundariesLockedStr) {
+    if (typeof currentBoundariesLockedStr !== undefined && currentBoundariesLockedStr) {
       this.boundariesToggleData.value = currentBoundariesLockedStr === 'true';
     }
   }
@@ -75,6 +75,7 @@ export default class GameOptions extends Vue {
     localStorage.setItem("currentGameSpeed", this.gameSpeedSliderData.value.toString());
     localStorage.setItem("currentBoundariesLocked", this.boundariesToggleData.value.toString());
     console.log("game started, speed: " + this.gameSpeedSliderData.format(this.gameSpeedSliderData.value) + ", boundaries locked: " + this.boundariesToggleData.value);
+    this.$router.push('game');
   }
 }
 </script>

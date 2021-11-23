@@ -12,7 +12,7 @@ export enum SnakeDirection {
 function areDirectionsOpposite(
   dir1: SnakeDirection,
   dir2: SnakeDirection
-): boolean {
+) {
   switch (dir1) {
     case SnakeDirection.Up:
       return dir2 != SnakeDirection.Down;
@@ -38,11 +38,11 @@ export interface IGameLogic {
   getMicePositions(): readonly vec2[];
 }
 
-export function createGameLogic(boundariesLocked: boolean = true,
-    maxMiceInGame: number = 3,
+export function createGameLogic(boundariesLocked = true,
+    maxMiceInGame = 3,
     micePopulationPeriod = 6,
     gameAreaSize: vec2 = new vec2(9, 16),
-    initialSnakeSize: number = 4
+    initialSnakeSize = 4
 ): IGameLogic {
     return new GameLogic(
         boundariesLocked, 
@@ -54,12 +54,12 @@ export function createGameLogic(boundariesLocked: boolean = true,
 }
 
 class GameLogic implements IGameLogic {
-  score: number = 0;
+  score = 0;
   snakeDirection: SnakeDirection = SnakeDirection.Up;
   snakeHeadPosition: vec2;
-  isGameOver: boolean = false;
+  isGameOver = false;
   snakeBodyPositions: vec2[] = [];
-  private micePopulationCounter: number = 0;
+  private micePopulationCounter = 0;
   private readonly gameArea: IGameArea;
 
   constructor(
@@ -106,7 +106,7 @@ class GameLogic implements IGameLogic {
     }
 
     const lastBodyPosition = this.snakeBodyPositions.pop();
-    if (lastBodyPosition != undefined) {
+    if (lastBodyPosition !== undefined) {
         this.gameArea.freeField(lastBodyPosition);
     }
 

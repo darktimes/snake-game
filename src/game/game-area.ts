@@ -31,10 +31,9 @@ class GameArea implements IGameArea{
 
     constructor(size: vec2) {
         this.size = size;
-        this.fields = new Array<GameAreaField>(size.x * size.y);
-        this.fields.forEach(occupation => {
-            occupation.occupator = undefined;
-        });
+        for (let i = 0; i < size.x * size.y; i++) {
+            this.fields.push({occupator: undefined});
+        }
     }
 
     isInBounds(position: vec2): boolean {
@@ -46,17 +45,17 @@ class GameArea implements IGameArea{
 
     occupyField(position: vec2, occupator: Occupator): void {
         if (!this.isInBounds(position)) return;
-        this.fields[position.x * this.size.x + position.y].occupator = occupator;
+        this.fields[position.y * this.size.x + position.x].occupator = occupator;
     }
 
     freeField(position: vec2): void {
         if (!this.isInBounds(position)) return;
-        this.fields[position.x * this.size.x + position.y].occupator = undefined;
+        this.fields[position.y * this.size.x + position.x].occupator = undefined;
     }
 
     getFieldOccupator(position: vec2): Occupator | undefined {
         if (!this.isInBounds(position)) return undefined;
-        return this.fields[position.x * this.size.x + position.y].occupator;
+        return this.fields[position.y * this.size.x + position.x].occupator;
     }
 
     getFieldsOfOccupator(occupator: Occupator): readonly vec2[] {
