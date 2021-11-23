@@ -4,3 +4,12 @@ export enum GameSpeed {
     Fast = 2,
     VeryFast = 3
 }
+
+export function gameSpeedAsString(value: GameSpeed): string {
+    switch(value) {
+        case GameSpeed.Slow: return 'Slow';
+        case GameSpeed.Moderate: return 'Moderate';
+        case GameSpeed.Fast: return 'Fast';
+        case GameSpeed.VeryFast: return 'Very Fast';
+      }
+}

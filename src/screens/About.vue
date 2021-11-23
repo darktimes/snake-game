@@ -1,6 +1,9 @@
 <template>
   <div class="container">
     <h3>About</h3>
+    <p>
+      This small project is merely a humble attempt to recreate one of the past legends.
+    </p>
   </div>
 </template>
 

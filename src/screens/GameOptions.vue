@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { GameSpeed } from '@/data/game-speed.enum'
+import { GameSpeed, gameSpeedAsString } from '@/data/game-speed.enum'
 import Slider from '@vueform/slider'
 import Toggle from '@vueform/toggle'
 
@@ -49,13 +49,7 @@ export default class GameOptions extends Vue {
     min: 0,
     max: 3,
     format: function(value: number): string {
-      switch(value) {
-        case GameSpeed.Slow: return 'Slow';
-        case GameSpeed.Moderate: return 'Moderate';
-        case GameSpeed.Fast: return 'Fast';
-        case GameSpeed.VeryFast: return 'Very Fast';
-      }
-      return '';
+      return gameSpeedAsString(value as GameSpeed);
     }
   }
 
@@ -124,4 +118,5 @@ td{
     width: 200px;
   }
 }
+
 </style>
