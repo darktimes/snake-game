@@ -31,7 +31,7 @@ class SnakeCanvasRenderer implements ISnakeRenderer {
         const areaSize = this.gameLogic.getGameAreaSize();
         this.canvas.fillStyle = "#F0F000";
         this.gameLogic.getMicePositions().forEach(pos => {
-            this.canvas.fillRect(pos.x * 44 + 11, (areaSize.y - pos.y) * 44 + 11, 22, 22);
+            this.canvas.fillRect(pos.x * 44 + 11, (areaSize.y - pos.y - 1) * 44 + 11, 22, 22);
         });
     }
 
@@ -39,7 +39,7 @@ class SnakeCanvasRenderer implements ISnakeRenderer {
         const areaSize = this.gameLogic.getGameAreaSize();
         this.canvas.fillStyle = "#16804f";
         this.gameLogic.snakeBodyPositions.forEach(pos => {
-            this.canvas.fillRect(pos.x * 44, (areaSize.y - pos.y) * 44, 44, 44);
+            this.canvas.fillRect(pos.x * 44, (areaSize.y - pos.y - 1) * 44, 44, 44);
         });
     }
 
@@ -47,8 +47,7 @@ class SnakeCanvasRenderer implements ISnakeRenderer {
         const areaSize = this.gameLogic.getGameAreaSize();
         this.canvas.fillStyle = "#4fd196";
         const headPos = this.gameLogic.snakeHeadPosition;
-        console.log("HeadPos: " + headPos.x * 44 + ", " + headPos.y * 44);
-        this.canvas.fillRect(headPos.x * 44, (areaSize.y - headPos.y) * 44, 44, 44);
+        this.canvas.fillRect(headPos.x * 44, (areaSize.y - headPos.y - 1) * 44, 44, 44);
     }
 
 }

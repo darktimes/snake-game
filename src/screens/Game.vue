@@ -1,12 +1,14 @@
 <template>
-  <canvas ref="gameCanvas" width="396" height="704" ></canvas>
+<div>
+  
+</div>
+  <canvas ref="gameCanvas" width="396" height="704"></canvas>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { createGameLogic, IGameLogic } from '@/game/game-logic';
+import { createGameLogic, IGameLogic, SnakeDirection } from '@/game/game-logic';
 import { createCanvasRenderer, ISnakeRenderer } from '@/game/game-simple-renderer';
-import { ref } from 'vue';
 
 @Options({})
 export default class Game extends Vue {
@@ -15,7 +17,7 @@ export default class Game extends Vue {
   private lastUpdateTimeStamp?: number;
   private interval = 1000;
   private renderer?: ISnakeRenderer;
-  private initialized = false;
+  private userDirection?: SnakeDirection;
 
   mounted(): void {
     const currentGameSpeedStr: string | null = localStorage.getItem("currentGameSpeed");
@@ -28,7 +30,7 @@ export default class Game extends Vue {
     const boundariesLocked = currentBoundariesLockedStr === 'true';
     const gameSpeed: number = 1 + (+currentGameSpeedStr);
     this.gameLogic = createGameLogic(boundariesLocked);
-    this.interval = 1000 / gameSpeed;
+    this.interval = 1000 / (gameSpeed * 3 );
     
     const canvas = this.$refs.gameCanvas as HTMLCanvasElement | undefined;
     
@@ -43,6 +45,18 @@ export default class Game extends Vue {
     }  else {
       console.log("couldnt find the ref");
     }
+
+    window.addEventListener('keydown', ev => {
+      if (ev.code === 'KeyW' || ev.code === 'ArrowUp') {
+        this.userDirection = SnakeDirection.Up;
+      } else if (ev.code === 'KeyD' || ev.code === 'ArrowRight') {
+        this.userDirection = SnakeDirection.Right;
+      } else if (ev.code === 'KeyS' || ev.code === 'ArrowDown') {
+        this.userDirection = SnakeDirection.Down;
+      } else if (ev.code === 'KeyA' || ev.code === 'ArrowLeft') {
+        this.userDirection = SnakeDirection.Left;
+      }
+    });
   }
   
   private gameCycle(timeStamp: number) {
@@ -50,6 +64,9 @@ export default class Game extends Vue {
     
     if (timeStamp - (this.lastUpdateTimeStamp !== undefined? this.lastUpdateTimeStamp : 0) > this.interval) {
       this.lastUpdateTimeStamp = timeStamp;
+      if (this.userDirection != undefined) {
+        this.gameLogic.setSnakeDirection(this.userDirection);
+      }
       this.gameLogic.update();
       
       if (this.gameLogic.isGameOver) {

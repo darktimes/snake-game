@@ -15,13 +15,13 @@ function areDirectionsOpposite(
 ) {
   switch (dir1) {
     case SnakeDirection.Up:
-      return dir2 != SnakeDirection.Down;
+      return dir2 == SnakeDirection.Down;
     case SnakeDirection.Right:
-      return dir2 != SnakeDirection.Left;
+      return dir2 == SnakeDirection.Left;
     case SnakeDirection.Down:
-      return dir2 != SnakeDirection.Up;
+      return dir2 == SnakeDirection.Up;
     case SnakeDirection.Left:
-      return dir2 != SnakeDirection.Right;
+      return dir2 == SnakeDirection.Right;
   }
 }
 
@@ -40,7 +40,7 @@ export interface IGameLogic {
 
 export function createGameLogic(boundariesLocked = true,
     maxMiceInGame = 3,
-    micePopulationPeriod = 6,
+    micePopulationPeriod = 6 * 2,
     gameAreaSize: vec2 = new vec2(9, 16),
     initialSnakeSize = 4
 ): IGameLogic {
@@ -105,29 +105,31 @@ class GameLogic implements IGameLogic {
       nextHeadPos = this.gameArea.wrapPosition(nextHeadPos);
     }
 
-    const lastBodyPosition = this.snakeBodyPositions.pop();
-    if (lastBodyPosition !== undefined) {
-        this.gameArea.freeField(lastBodyPosition);
-    }
-
     const nextFieldOccupator = this.gameArea.getFieldOccupator(nextHeadPos);
         
-    this.snakeBodyPositions.unshift(this.snakeHeadPosition);
+    this.snakeBodyPositions.unshift(new vec2(this.snakeHeadPosition.x, this.snakeHeadPosition.y));
     this.snakeHeadPosition = nextHeadPos;
 
     if (nextFieldOccupator == Occupator.Snake) {
-        this.isGameOver = true;
+        if (this.snakeBodyPositions[this.snakeBodyPositions.length - 1] == nextHeadPos) {
+            this.snakeBodyPositions.pop();
+        } else {
+            this.isGameOver = true;
+        }
         return;
     } else if (nextFieldOccupator == Occupator.Mouse) {
         this.score += 100;
-        this.gameArea.occupyField(nextHeadPos, Occupator.Snake);
-        return;
+    } else {
+        const poppedPos = this.snakeBodyPositions.pop();
+        if (poppedPos != undefined) this.gameArea.freeField(poppedPos);
     }
+    this.gameArea.occupyField(nextHeadPos, Occupator.Snake);
 
     this.micePopulationCounter++;
-    if (this.micePopulationCounter % this.micePopulationPeriod == 0) {
+    const currentMiceCount = this.gameArea.getNumberOfOccupiedFields(Occupator.Mouse);
+    if (this.micePopulationCounter % this.micePopulationPeriod == 0 || currentMiceCount == 0) {
         this.micePopulationCounter = 0;
-        if (this.gameArea.getNumberOfOccupiedFields(Occupator.Mouse) < this.maxMiceInGame) {
+        if (currentMiceCount < this.maxMiceInGame) {
             this.addMouse();
         }
     }
@@ -138,6 +140,7 @@ class GameLogic implements IGameLogic {
   }
 
   setSnakeDirection(direction: SnakeDirection): void {
+    
     if (!areDirectionsOpposite(this.snakeDirection, direction)) {
       this.snakeDirection = direction;
     }
@@ -148,6 +151,7 @@ class GameLogic implements IGameLogic {
   }
 
   private getNextPosition(position: vec2): vec2 {
+    
     switch (this.snakeDirection) {
       case SnakeDirection.Up: {
         return new vec2(position.x, position.y + 1);

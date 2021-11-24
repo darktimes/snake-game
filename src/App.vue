@@ -16,10 +16,6 @@
     src: url('assets/aquila.regular.ttf') format('truetype');
 }
 
-:root {
-
-}
-
 body, button {
   color: $color-text;
   background-color: $color-surface;

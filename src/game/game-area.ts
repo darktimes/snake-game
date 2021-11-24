@@ -37,9 +37,9 @@ class GameArea implements IGameArea{
     }
 
     isInBounds(position: vec2): boolean {
-        return position.x > 0 &&
+        return position.x >= 0 &&
             position.x < this.size.x &&
-            position.y > 0 &&
+            position.y >= 0 &&
             position.y < this.size.y;
     }
 
@@ -64,8 +64,8 @@ class GameArea implements IGameArea{
             .map(field => {
                 const fieldIndex = this.fields.indexOf(field);
                 return new vec2(
-                    Math.floor(fieldIndex / this.size.x), 
-                    fieldIndex % this.size.x
+                    fieldIndex % this.size.x,
+                    Math.floor(fieldIndex / this.size.x)
                 );
             });     
     }
@@ -87,6 +87,9 @@ class GameArea implements IGameArea{
         if (freeOccupations.length == 0) return undefined;
         const rndIndexInFreeList = Math.floor(Math.random() * (freeOccupations.length - 1));
         const resultIndex = this.fields.indexOf(freeOccupations[rndIndexInFreeList]);
-        return new vec2(Math.floor(resultIndex / this.size.x), resultIndex % this.size.x);
+        return new vec2(
+            resultIndex % this.size.x,
+            Math.floor(resultIndex / this.size.x)
+        );
     }
 }
