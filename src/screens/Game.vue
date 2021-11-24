@@ -1,14 +1,12 @@
 <template>
-<div>
-  
-</div>
   <canvas ref="gameCanvas" width="396" height="704"></canvas>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { createGameLogic, IGameLogic, SnakeDirection } from '@/game/game-logic';
-import { createCanvasRenderer, ISnakeRenderer } from '@/game/game-simple-renderer';
+import { createGameLogic, IGameLogic } from '@/game/game-logic';
+import { createCanvasRenderer, ISnakeRenderer } from '@/game/game-canvas-renderer';
+import { SnakeDirection } from '@/game/snake-direction';
 
 @Options({})
 export default class Game extends Vue {

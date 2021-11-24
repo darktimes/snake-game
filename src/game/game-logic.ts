@@ -1,29 +1,7 @@
 import { assert } from "@vue/compiler-core";
 import { createGameArea, IGameArea, Occupator } from "./game-area";
+import { areDirectionsOpposite, SnakeDirection } from "./snake-direction";
 import { vec2 } from "./vec2";
-
-export enum SnakeDirection {
-  Up,
-  Right,
-  Down,
-  Left,
-}
-
-function areDirectionsOpposite(
-  dir1: SnakeDirection,
-  dir2: SnakeDirection
-) {
-  switch (dir1) {
-    case SnakeDirection.Up:
-      return dir2 == SnakeDirection.Down;
-    case SnakeDirection.Right:
-      return dir2 == SnakeDirection.Left;
-    case SnakeDirection.Down:
-      return dir2 == SnakeDirection.Up;
-    case SnakeDirection.Left:
-      return dir2 == SnakeDirection.Right;
-  }
-}
 
 export interface IGameLogic {
   readonly score: number;

@@ -19,7 +19,6 @@ class SnakeCanvasRenderer implements ISnakeRenderer {
         this.renderSnakeHead();
     }
     
-
     private renderGameArea() {
         const areaSize = this.gameLogic.getGameAreaSize();
         this.canvas.fillStyle = "#121212";
@@ -49,5 +48,4 @@ class SnakeCanvasRenderer implements ISnakeRenderer {
         const headPos = this.gameLogic.snakeHeadPosition;
         this.canvas.fillRect(headPos.x * 44, (areaSize.y - headPos.y - 1) * 44, 44, 44);
     }
-
 }
