@@ -26,7 +26,7 @@
         </td>
       </tr>
     </table>
-    <button class="cta" @click="startGame()">Go!</button>
+    <button class="cta accent" @click="startGame()">Go!</button>
   </div>
 </template>
 
@@ -99,12 +99,12 @@ export default class GameOptions extends Vue {
   --toggle-border-off: #FFFFFF00;
   --toggle-width: 5em;
 }
+</style>
+
+<style lang="scss" scoped>
 
 .gamespeed-slider-container{
   margin-top: 4em;
-}
-.cta{
-  margin-top: 2em;
 }
 
 table {

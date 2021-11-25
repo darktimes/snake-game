@@ -34,7 +34,7 @@ class GameRecordsRepo implements IGameRecordsRepo{
         const record = new GameRecord(name, score, gameSettings.gameSpeed, gameSettings.boundariesLocked);
         this.records.push(record);
         this.records.sort((r1, r2) => r2.score - r1.score);
-        this.records.splice(4);
+        this.records.splice(5);
         localStorage.setItem(this.recordsStorageKey, JSON.stringify(this.records));
     }
 }

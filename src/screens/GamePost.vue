@@ -26,6 +26,20 @@
           <td>{{uiData.boundariesLocked}}</td>
         </tr>
       </table>
+      <div class="data-input" v-if="!recordAlreadyHandled && uiData.isNewRecord">
+        <SgInputField 
+          :placeholder="'Enter your name'"
+          v-model=playerName
+          >
+        </SgInputField>
+        <div>
+          <button class="cta accent" @click="submitRecord()">Submit record!</button>
+        </div>
+      </div>
+      <div v-else-if="recordAlreadyHandled">
+        <p>Your record was successfully submitted!</p>
+      </div>
+      <button class="cta play" @click="startNewGame()">Play again!</button>
     </div>
   </div>
 </template>
@@ -36,24 +50,29 @@ type GamePostData = {
   score: number;
   gameSpeed: string,
   boundariesLocked: boolean,
-  isNewRecord: boolean,
-  recordAlreadyHandled: boolean
+  isNewRecord: boolean
 }
 
 import { Options, Vue } from 'vue-class-component';
 import { gameSessionsRepo } from '@/repos/game-sessions.repo'
 import { gameRecordsRepo} from '@/repos/game-records.repo'
 import { gameSpeedAsString } from '@/data-models/game-speed.enum';
-import { UIState } from '@/util/ui-state.enum'
+import SgInputField from '@/components/sg-input-field.vue';
+import { UIState } from '@/util/ui-state.enum';
+import { GameSession } from '@/data-models/game-session.data';
+import { GameRecord } from '@/data-models/game-record.data';
 
 @Options({
   components: {
-    
+    SgInputField
   },
 })
 export default class GamePost extends Vue {
   uiState = UIState.Loading;
+  currentSession?: GameSession;
   uiData?: GamePostData;
+  recordAlreadyHandled = false;
+  playerName = ''
 
   mounted(): void {
     const currentSessionId = this.$route.params.sessionId as string;
@@ -64,29 +83,51 @@ export default class GamePost extends Vue {
       return;
     }
 
-    let currentSession = gameSessionsRepo.getSession(currentSessionId);
-    if (currentSession === undefined) {
+    this.currentSession = gameSessionsRepo.getSession(currentSessionId);
+    if (this.currentSession === undefined) {
       this.uiState = UIState.Error;
       return;
     }
 
     this.uiData = {
-      score: currentSession.score,
-      gameSpeed: gameSpeedAsString(currentSession.gameSettings.gameSpeed),
-      boundariesLocked: currentSession.gameSettings.boundariesLocked,
-      isNewRecord: gameRecordsRepo.beatsRecord(currentSession.score), 
-      recordAlreadyHandled: false
+      score: this.currentSession.score,
+      gameSpeed: gameSpeedAsString(this.currentSession.gameSettings.gameSpeed),
+      boundariesLocked: this.currentSession.gameSettings.boundariesLocked,
+      isNewRecord: gameRecordsRepo.beatsRecord(this.currentSession.score)
     };
 
     this.uiState = UIState.Result;
   }
+
+  submitRecord(): void {
+    if (typeof this.currentSession === undefined || ! this.currentSession) return;
+    if (this.recordAlreadyHandled) return;
+    gameRecordsRepo.insertRecord(this.currentSession.score, this.playerName, this.currentSession.gameSettings);
+    this.recordAlreadyHandled = true;
+  }
+
+  startNewGame(): void {
+    this.$router.push({name: 'Game'});
+  }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+table {
+  margin: 1em auto 1em auto;
+}
+
 p{
   max-width: 600px;
 }
+
+button {
+  margin: 1em;
+  &.play {
+    margin-top: 2em;
+  }
+}
+
 td{
   width: 200px;
   &.title {
@@ -94,4 +135,5 @@ td{
   }
   
 }
+
 </style>

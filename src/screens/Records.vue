@@ -41,6 +41,10 @@ export default class Records extends Vue {
 
 <style lang="scss">
 
+table {
+  margin: 1em auto 1em auto;
+}
+
 th {
   padding: 0.5em 1em;
   &.small {

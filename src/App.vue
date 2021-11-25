@@ -16,15 +16,6 @@
     src: url('assets/aquila.regular.ttf') format('truetype');
 }
 
-body, button {
-  color: $color-text;
-  background-color: $color-surface;
-  font-family: Montserrat, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  margin: 0px;
-}
-
 #app {
     text-align: center;
   }
@@ -42,6 +33,38 @@ body, button {
     }
   }
 }
+
+body, button {
+  color: $color-text;
+  background-color: $color-surface;
+  font-family: Montserrat, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0px;
+}
+
+button.cta {
+  margin-top: 2em;
+  border: none;
+  border-radius: 3em;
+  background-color: $color-primary;
+  padding:1em;
+  min-width: 12em;
+  &:hover{
+    cursor: pointer;
+  }
+  &.accent {
+    background-color: $color-accent;
+  }
+}
+
+.container {
+  margin: 0em 2em;
+}
+</style>
+
+<style lang="scss" scoped>
+
 
 .logo {
   margin-top: 0.5em;

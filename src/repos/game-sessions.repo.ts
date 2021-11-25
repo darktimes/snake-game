@@ -18,8 +18,9 @@ class GameSessionsRepo implements IGameSessionsRepo{
 
     constructor() {
         const sessionsStr = localStorage.getItem(this.sessionsStorageKey);
+        console.log(sessionsStr);
         if (typeof sessionsStr !== undefined && sessionsStr) {
-            this.sessions = JSON.parse(sessionsStr) as SessionMap ?? {};
+            this.sessions = JSON.parse(sessionsStr);
         }
     }
 
