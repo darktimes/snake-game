@@ -23,27 +23,15 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { IGameRecordData, GameRecordData} from '@/data/game-record-data'
-import { GameSpeed, gameSpeedAsString } from '@/data/game-speed.enum';
+import { GameSpeed, gameSpeedAsString } from '@/data-models/game-speed.enum';
+import { computed } from '@vue/reactivity';
+import { gameRecordsRepo } from '@/repos/game-records.repo';
 
 @Options({
 })
 export default class Records extends Vue {
-  records: Array<GameRecordData> = [];
-  
-  mounted(): void {
-    const recordsStr = localStorage.getItem("records");
-    if (typeof recordsStr != undefined && recordsStr) {
-      this.records = JSON.parse(recordsStr) as Array<IGameRecordData>;
-    } else {
-      this.records = [
-        new GameRecordData(GameSpeed.Moderate, true, 3000, "Hanz"),
-        new GameRecordData(GameSpeed.Moderate, true, 2000, "Wolfgang"),
-        new GameRecordData(GameSpeed.Slow, true, 1000, "Johaness")
-      ]
-      localStorage.setItem("records", JSON.stringify(this.records));
-    }
-  }
+
+  records = computed(() => gameRecordsRepo.records);
 
   formatGameSpeed(value: GameSpeed): string {
     return gameSpeedAsString(value);

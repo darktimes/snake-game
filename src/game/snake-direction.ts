@@ -8,7 +8,7 @@ export enum SnakeDirection {
   export function areDirectionsOpposite(
     dir1: SnakeDirection,
     dir2: SnakeDirection
-  ) {
+  ): boolean {
     switch (dir1) {
       case SnakeDirection.Up:
         return dir2 == SnakeDirection.Down;

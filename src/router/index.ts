@@ -5,6 +5,7 @@ import Records from '../screens/Records.vue'
 import Game from '../screens/Game.vue'
 import GameOptions from '../screens/GameOptions.vue'
 import GamePost from '../screens/GamePost.vue'
+import PageNotFound from '../screens/PageNotFound.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -33,16 +34,27 @@ const routes: Array<RouteRecordRaw> = [
     component: GameOptions
   },
   {
-    path: '/game-post',
+    path: '/game-post/:sessionId',
     name: 'GamePost',
     component: GamePost
-  },
-
+  }
+  ,
+  // {
+  //   path: '/:pathMatch(.*)*',
+  //   name: "404",
+  //   component: PageNotFound
+  // }
 ]
+
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+
+// router.resolve({
+//   name: "404",
+//   params: { pathMatch: ['404'] },
+// }).href
 
 export default router

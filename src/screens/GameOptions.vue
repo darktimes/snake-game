@@ -6,10 +6,10 @@
         <td class="first">Game Speed:</td>
         <td class="second">
             <Slider 
-              v-model="gameSpeedSliderData.value"
-              :format="gameSpeedSliderData.format"
-              :max="gameSpeedSliderData.max"
-              :min="gameSpeedSliderData.min"
+              v-model="gameSpeed"
+              :format="gameSpeedSliderOptions.format"
+              :max="gameSpeedSliderOptions.max"
+              :min="gameSpeedSliderOptions.min"
             >
             </Slider>
         </td>
@@ -18,9 +18,9 @@
         <td class="first">Locked Boundaries:</td>
         <td class="second">
           <Toggle
-            v-model="boundariesToggleData.value"
-            :onLabel="boundariesToggleData.onLabel"
-            :offLabel="boundariesToggleData.offLabel"
+            v-model="boundariesLocked"
+            :onLabel="boundariesLockedToggleOptions.onLabel"
+            :offLabel="boundariesLockedToggleOptions.offLabel"
           >
           </Toggle>
         </td>
@@ -32,9 +32,11 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { GameSpeed, gameSpeedAsString } from '@/data/game-speed.enum'
+import { GameSpeed, gameSpeedAsString } from '@/data-models/game-speed.enum'
 import Slider from '@vueform/slider'
 import Toggle from '@vueform/toggle'
+import { computed } from '@vue/reactivity';
+import { gameSettingsRepo} from '@/repos/game-settings.repo';
 
 @Options({
   components: {
@@ -44,8 +46,25 @@ import Toggle from '@vueform/toggle'
 })
 export default class GameOptions extends Vue {
 
-  gameSpeedSliderData = {
-    value: 1,
+  gameSpeed = computed({
+    get(): GameSpeed {
+      return gameSettingsRepo.gameSettings.gameSpeed
+    },
+    set(val: GameSpeed) {
+      gameSettingsRepo.updateSpeed(val);
+    }
+  });
+
+  boundariesLocked = computed({
+    get(): boolean {
+      return gameSettingsRepo.gameSettings.boundariesLocked;
+    },
+    set(val: boolean) {
+      gameSettingsRepo.updateBoundariesLocked(val);
+    }
+  })
+
+  gameSpeedSliderOptions = {
     min: 0,
     max: 3,
     format: function(value: number): string {
@@ -53,29 +72,13 @@ export default class GameOptions extends Vue {
     }
   }
 
-  boundariesToggleData = {
-    value: false,
+  boundariesLockedToggleOptions = {
     offLabel: 'No',
     onLabel: 'Yes'
   }
-  
-  mounted(): void {
-    const currentGameSpeedStr: string | null = localStorage.getItem("currentGameSpeed");
-    const currentBoundariesLockedStr: string | null = localStorage.getItem("currentBoundariesLocked");
-
-    if (typeof currentGameSpeedStr !== undefined && currentGameSpeedStr) {
-      this.gameSpeedSliderData.value = +currentGameSpeedStr;
-    }
-    if (typeof currentBoundariesLockedStr !== undefined && currentBoundariesLockedStr) {
-      this.boundariesToggleData.value = currentBoundariesLockedStr === 'true';
-    }
-  }
 
   startGame(): void {
-    localStorage.setItem("currentGameSpeed", this.gameSpeedSliderData.value.toString());
-    localStorage.setItem("currentBoundariesLocked", this.boundariesToggleData.value.toString());
-    console.log("game started, speed: " + this.gameSpeedSliderData.format(this.gameSpeedSliderData.value) + ", boundaries locked: " + this.boundariesToggleData.value);
-    this.$router.push('game');
+    this.$router.push({name:'Game'});
   }
 }
 </script>

@@ -14,7 +14,7 @@ import { Options, Vue } from 'vue-class-component';
 })
 export default class Home extends Vue {
   toOptions(): void{
-    this.$router.push("game-options");
+    this.$router.push({name: 'GameOptions'});
   }
 }
 </script>

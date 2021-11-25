@@ -4,34 +4,24 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { createGameLogic, IGameLogic } from '@/game/game-logic';
+import { createGameLogic } from '@/game/game-logic';
 import { createCanvasRenderer, ISnakeRenderer } from '@/game/game-canvas-renderer';
 import { SnakeDirection } from '@/game/snake-direction';
+import { gameSettingsRepo } from '@/repos/game-settings.repo';
+import { gameSessionsRepo } from '@/repos/game-sessions.repo';
 
 @Options({})
 export default class Game extends Vue {
 
-  private gameLogic?: IGameLogic;
+  private gameLogic = createGameLogic(gameSettingsRepo.gameSettings.boundariesLocked);
+  private updateInterval = 1000.0 / ((gameSettingsRepo.gameSettings.gameSpeed + 1) * 3);
   private lastUpdateTimeStamp?: number;
-  private interval = 1000;
   private renderer?: ISnakeRenderer;
   private userDirection?: SnakeDirection;
+  private currentSession = gameSessionsRepo.requestNewSession(gameSettingsRepo.gameSettings);
 
   mounted(): void {
-    const currentGameSpeedStr: string | null = localStorage.getItem("currentGameSpeed");
-    const currentBoundariesLockedStr: string | null = localStorage.getItem("currentBoundariesLocked");
-    if (typeof currentGameSpeedStr === undefined || !currentGameSpeedStr || 
-        typeof currentBoundariesLockedStr === undefined || !currentBoundariesLockedStr) {
-      this.$router.push("game-options");
-      return;
-    }
-    const boundariesLocked = currentBoundariesLockedStr === 'true';
-    const gameSpeed: number = 1 + (+currentGameSpeedStr);
-    this.gameLogic = createGameLogic(boundariesLocked);
-    this.interval = 1000 / (gameSpeed * 3 );
-    
     const canvas = this.$refs.gameCanvas as HTMLCanvasElement | undefined;
-    
     if (canvas !== undefined) {
       const context = canvas.getContext("2d");
       if (context !== undefined && context) {
@@ -58,30 +48,27 @@ export default class Game extends Vue {
   }
   
   private gameCycle(timeStamp: number) {
-    if (this.gameLogic === undefined || this.renderer === undefined) return;
+    if (this.renderer === undefined) return;
+
+    if (this.gameLogic.isGameOver) {
+        this.$router.push({name: 'GamePost', params: { sessionId: this.currentSession.id }});
+    }
     
-    if (timeStamp - (this.lastUpdateTimeStamp !== undefined? this.lastUpdateTimeStamp : 0) > this.interval) {
+    if (timeStamp - (this.lastUpdateTimeStamp !== undefined? this.lastUpdateTimeStamp : 0) > this.updateInterval) {
       this.lastUpdateTimeStamp = timeStamp;
       if (this.userDirection != undefined) {
         this.gameLogic.setSnakeDirection(this.userDirection);
       }
       this.gameLogic.update();
-      
-      if (this.gameLogic.isGameOver) {
-        console.log("Score: " + this.gameLogic.score);
-        console.log("Game over");
-        this.gameLogic = undefined;
-      } else {
-        this.renderer.render();
-        // console.log(timeStamp);
-      }
+      this.renderer.render();
+      this.currentSession.score = this.gameLogic.score;
     } 
 
     window.requestAnimationFrame(this.gameCycle);
   }
 
   beforeUnmount(): void {
-    this.gameLogic = undefined;
+    this.renderer = undefined;
   }
 }
 </script>
