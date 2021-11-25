@@ -6,6 +6,10 @@
       that resulted in a time of my frontend-development research of a 
       <a href="https://v3.vuejs.org/">Vue3 framework</a>.
     </p>
+    <p>
+      In case you are intereseted how this mini web-project was settled, feel free to check
+      the <a href="https://github.com/darktimes/snake-game">repository.</a>
+    </p>
   </div>
 </template>
 
@@ -22,7 +26,7 @@ export default class About extends Vue {}
 
 <style lang="scss">
 p{
-  margin:auto;
+  margin:1em auto;
   max-width: 600px;
 }
 </style>
