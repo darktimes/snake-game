@@ -5,14 +5,12 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { defineComponent } from "@vue/runtime-core";
 
-@Options({
-  components: {
-    
-  },
-})
-export default class PageNotFound extends Vue {}
+
+export default defineComponent({
+});
+
 </script>
 
 <style lang="scss">

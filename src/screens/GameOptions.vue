@@ -7,7 +7,7 @@
         <td class="second">
             <Slider 
               v-model="gameSpeed"
-              :format="gameSpeedSliderOptions.format"
+              :format="formatGameSpeed"
               :max="gameSpeedSliderOptions.max"
               :min="gameSpeedSliderOptions.min"
             >
@@ -29,50 +29,53 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import { GameSpeed, gameSpeedAsString } from '@/data-models/game-speed.enum'
-import Slider from '@vueform/slider'
-import SgToggle  from '@/components/sg-toggle.vue'
-import { computed } from '@vue/reactivity';
-import { gameSettingsRepo} from '@/repos/game-settings.repo';
 
-@Options({
+import { GameSpeed, gameSpeedAsString } from "@/data-models/game-speed.enum";
+import { gameSettingsRepo } from "@/repos/game-settings.repo";
+import { defineComponent } from "@vue/runtime-core";
+import SgToggle from '@/components/sg-toggle.vue';
+import Slider from '@vueform/slider'
+
+export default defineComponent({
   components: {
     Slider,
     SgToggle
-  }
-})
-export default class GameOptions extends Vue {
-  gameSpeed = computed({
-    get(): GameSpeed {
-      return gameSettingsRepo.gameSettings.gameSpeed;
+  },
+  data() {
+    return {
+      gameSpeedSliderOptions: {
+        min: 0,
+        max: 3
+      }
+    };
+  },
+  computed: {
+    gameSpeed: {
+      get(): GameSpeed {
+        return gameSettingsRepo.gameSettings.gameSpeed;
+      },
+      set(val: GameSpeed) {
+        gameSettingsRepo.updateSpeed(val);
+      }
     },
-    set(val: GameSpeed) {
-      gameSettingsRepo.updateSpeed(val);
+  boundariesLocked: {
+      get(): boolean {
+        return gameSettingsRepo.gameSettings.boundariesLocked;
+      },
+      set(val: boolean) {
+        gameSettingsRepo.updateBoundariesLocked(val);
+      }
     }
-  });
-
-  boundariesLocked = computed({
-    get(): boolean {
-      return gameSettingsRepo.gameSettings.boundariesLocked;
-    },
-    set(val: boolean) {
-      gameSettingsRepo.updateBoundariesLocked(val);
-    }
-  });
-
-  gameSpeedSliderOptions = {
-    min: 0,
-    max: 3,
-    format: function(value: number): string {
+  },
+  methods: {
+    formatGameSpeed(value: number): string {
       return gameSpeedAsString(value as GameSpeed);
+    },
+    startGame(): void {
+      this.$router.push({name:'Game'});
     }
   }
-
-  startGame(): void {
-    this.$router.push({name:'Game'});
-  }
-}
+});
 </script>
 
 <style lang="scss">
@@ -87,10 +90,6 @@ export default class GameOptions extends Vue {
 </style>
 
 <style lang="scss" scoped>
-
-.gamespeed-slider-container{
-  margin-top: 4em;
-}
 
 table {
   margin: 3em auto 2em auto;

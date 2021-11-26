@@ -17,29 +17,29 @@
         </tr>
       </template>
     </table> 
-
   </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
 import { GameSpeed, gameSpeedAsString } from '@/data-models/game-speed.enum';
-import { computed } from '@vue/reactivity';
 import { gameRecordsRepo } from '@/repos/game-records.repo';
+import { defineComponent } from '@vue/runtime-core';
 
-@Options({
-})
-export default class Records extends Vue {
-
-  records = computed(() => gameRecordsRepo.records);
-
-  formatGameSpeed(value: GameSpeed): string {
-    return gameSpeedAsString(value);
+export default defineComponent( {
+  data() {
+    return {
+      records: gameRecordsRepo.records
+    };
+  },
+  methods: {
+    formatGameSpeed(value: GameSpeed): string {
+      return gameSpeedAsString(value);
+    }
   }
-}
+});
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 table {
   margin: 1em auto 1em auto;

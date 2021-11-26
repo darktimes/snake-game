@@ -1,32 +1,37 @@
 <template>
-    <input type="text" :placeholder="placeholder" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)"> 
+    <input type="text" :placeholder="placeholder" :value="modelValue" @input="updateValue($event.target.value)"> 
 </template>
 
 <script lang="ts">
 
-import { Options, Vue } from "vue-class-component";
+import { defineComponent } from "@vue/runtime-core";
+import { ref, toRefs } from "vue";
 
-@Options({
-    props : {
-        placeholder: {
+export default defineComponent({
+    props: {
+        modelValue: {
             type: String
         },
-        
-        hasErrors: {
-            type: Boolean
-        },
-        modelValue: {
+        placeholder: {
             type: String
         }
     },
-    emits: ['update:modelValue'] //no idea how this works and how am i supposed to properly type it
-})
-export default class SgInputField extends Vue {
-
-}
+    setup(props) {
+        const value = ref(toRefs(props).modelValue.value);
+        return {
+            value: value
+        };
+    },
+    methods: {
+        updateValue(value: string) {
+            this.value = value;
+            this.$emit('update:modelValue', value);
+        }
+    }
+});
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 input[type=text] {
   padding: 12px 20px;
   margin: 8px 0;

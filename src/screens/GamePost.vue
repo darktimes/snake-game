@@ -46,13 +46,6 @@
 
 <script lang="ts">
 
-type GamePostData = {
-  score: number;
-  gameSpeed: string,
-  boundariesLocked: boolean,
-  isNewRecord: boolean
-}
-
 import { gameSessionsRepo } from '@/repos/game-sessions.repo'
 import { gameRecordsRepo} from '@/repos/game-records.repo'
 import { GameSpeed, gameSpeedAsString } from '@/data-models/game-speed.enum';
@@ -60,7 +53,6 @@ import SgInputField from '@/components/sg-input-field.vue';
 import { GameSession } from '@/data-models/game-session.data';
 import { defineComponent } from '@vue/runtime-core';
 import { useRoute } from 'vue-router';
-
 
 export default defineComponent({
   components: {

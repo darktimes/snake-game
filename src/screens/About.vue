@@ -14,17 +14,12 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { defineComponent } from '@vue/runtime-core';
 
-@Options({
-  components: {
-    
-  },
-})
-export default class About extends Vue {}
+export default defineComponent({})
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 p{
   margin:1em auto;
   max-width: 600px;
