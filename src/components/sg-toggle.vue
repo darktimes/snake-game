@@ -11,8 +11,8 @@
 <script lang="ts">
 
 
-import { defineComponent, reactive } from "@vue/runtime-core";
-import { ref, toRefs, watch } from "vue";
+import { defineComponent } from "@vue/runtime-core";
+import { ref, toRefs } from "vue";
 
 export default defineComponent({
     props: {

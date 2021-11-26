@@ -1,32 +1,32 @@
 <template>
   <div class="container">
-    <div v-if="uiState==0">
+    <div v-if="isLoading">
       <h3>Loading</h3>
       <p>Hold on a sec...</p>
     </div>
-    <div v-if="uiState==1">
+    <div v-if="hasError">
       <h3>Error :(</h3>
       <p>Unfortunetly there was some kind of an error. I am truely sorry if you lost your record 
         because of that.</p>
     </div>
-    <div v-if="uiState==2">
-      <h3 v-if="uiData.isNewRecord">New record!</h3>
+    <div v-else>
+      <h3 v-if="isNewRecord">New record!</h3>
       <h3 v-else>Results</h3>
       <table>
         <tr>
           <td class="title">Score:</td>
-          <td>{{uiData.score}}</td>
+          <td>{{score}}</td>
         </tr>
         <tr>
           <td class="title">Game Speed:</td>
-          <td>{{uiData.gameSpeed}}</td>
+          <td>{{gameSpeed}}</td>
         </tr>
         <tr>
           <td class="title">Locked Boundaries:</td>
-          <td>{{uiData.boundariesLocked}}</td>
+          <td>{{boundariesLocked}}</td>
         </tr>
       </table>
-      <div class="data-input" v-if="!recordAlreadyHandled && uiData.isNewRecord">
+      <div class="data-input" v-if="!recordAlreadyHandled && isNewRecord">
         <SgInputField 
           :placeholder="'Enter your name'"
           v-model="playerName"
@@ -53,62 +53,66 @@ type GamePostData = {
   isNewRecord: boolean
 }
 
-import { Options, Vue } from 'vue-class-component';
 import { gameSessionsRepo } from '@/repos/game-sessions.repo'
 import { gameRecordsRepo} from '@/repos/game-records.repo'
-import { gameSpeedAsString } from '@/data-models/game-speed.enum';
+import { GameSpeed, gameSpeedAsString } from '@/data-models/game-speed.enum';
 import SgInputField from '@/components/sg-input-field.vue';
-import { UIState } from '@/util/ui-state.enum';
 import { GameSession } from '@/data-models/game-session.data';
+import { defineComponent } from '@vue/runtime-core';
+import { useRoute } from 'vue-router';
 
-@Options({
+
+export default defineComponent({
   components: {
     SgInputField
-  },
-})
-export default class GamePost extends Vue {
-  uiState = UIState.Loading;
-  currentSession?: GameSession;
-  uiData?: GamePostData;
-  recordAlreadyHandled = false;
-  playerName = ''
+  }, 
+  setup() {
+    const route = useRoute();
+    const currentSessionId = route.params.sessionId as string;
 
-  mounted(): void {
-    const currentSessionId = this.$route.params.sessionId as string;
-    
     if (typeof currentSessionId === undefined || !currentSessionId) {
       console.log("failed to extract session id from route params");
-      this.uiState = UIState.Error;
-      return;
     }
+    var session = gameSessionsRepo.getSession(currentSessionId);
 
-    this.currentSession = gameSessionsRepo.getSession(currentSessionId);
-    if (this.currentSession === undefined) {
-      this.uiState = UIState.Error;
-      return;
-    }
-
-    this.uiData = {
-      score: this.currentSession.score,
-      gameSpeed: gameSpeedAsString(this.currentSession.gameSettings.gameSpeed),
-      boundariesLocked: this.currentSession.gameSettings.boundariesLocked,
-      isNewRecord: gameRecordsRepo.beatsRecord(this.currentSession.score)
+    return {
+      session: session
     };
-
-    this.uiState = UIState.Result;
+  },
+  data() {
+    let session = this.session as unknown as GameSession | undefined
+    return {
+      score: session?.score ?? 0,
+      recordAlreadyHandled: session?.recordAlreadyHandled ?? true,
+      playerName: '',
+      boundariesLocked: session?.gameSettings?.boundariesLocked ?? true
+    };
+  },
+  computed: {
+    isLoading(): boolean{
+      return this.session === undefined;
+    },
+    hasError(): boolean {
+      return this.session === null;
+    },
+    isNewRecord(): boolean {
+      return gameRecordsRepo.beatsRecord(this.score);
+    },
+    gameSpeed(): string {
+      return gameSpeedAsString(this.session?.gameSettings.gameSpeed ?? GameSpeed.Moderate);
+    }
+  },
+  methods: {
+    submitRecord(): void {
+     if(typeof this.session === undefined || !this.session) return;
+     gameRecordsRepo.insertRecord(this.session.score, this.playerName, this.session.gameSettings);
+     this.recordAlreadyHandled = true;
+    },
+    startNewGame(): void {
+      this.$router.push({name: 'Game'});
+    }
   }
-
-  submitRecord(): void {
-    if (typeof this.currentSession === undefined || ! this.currentSession) return;
-    if (this.recordAlreadyHandled) return;
-    gameRecordsRepo.insertRecord(this.currentSession.score, this.playerName, this.currentSession.gameSettings);
-    this.recordAlreadyHandled = true;
-  }
-
-  startNewGame(): void {
-    this.$router.push({name: 'Game'});
-  }
-}
+});
 </script>
 
 <style lang="scss" scoped>
