@@ -29,7 +29,7 @@
       <div class="data-input" v-if="!recordAlreadyHandled && uiData.isNewRecord">
         <SgInputField 
           :placeholder="'Enter your name'"
-          v-model=playerName
+          v-model="playerName"
           >
         </SgInputField>
         <div>
@@ -60,7 +60,6 @@ import { gameSpeedAsString } from '@/data-models/game-speed.enum';
 import SgInputField from '@/components/sg-input-field.vue';
 import { UIState } from '@/util/ui-state.enum';
 import { GameSession } from '@/data-models/game-session.data';
-import { GameRecord } from '@/data-models/game-record.data';
 
 @Options({
   components: {

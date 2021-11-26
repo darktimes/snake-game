@@ -17,12 +17,10 @@
       <tr>
         <td class="first">Locked Boundaries:</td>
         <td class="second">
-          <Toggle
+          <sg-toggle
             v-model="boundariesLocked"
-            :onLabel="boundariesLockedToggleOptions.onLabel"
-            :offLabel="boundariesLockedToggleOptions.offLabel"
           >
-          </Toggle>
+          </sg-toggle>
         </td>
       </tr>
     </table>
@@ -34,21 +32,20 @@
 import { Options, Vue } from 'vue-class-component';
 import { GameSpeed, gameSpeedAsString } from '@/data-models/game-speed.enum'
 import Slider from '@vueform/slider'
-import Toggle from '@vueform/toggle'
+import SgToggle  from '@/components/sg-toggle.vue'
 import { computed } from '@vue/reactivity';
 import { gameSettingsRepo} from '@/repos/game-settings.repo';
 
 @Options({
   components: {
     Slider,
-    Toggle
+    SgToggle
   }
 })
 export default class GameOptions extends Vue {
-
   gameSpeed = computed({
     get(): GameSpeed {
-      return gameSettingsRepo.gameSettings.gameSpeed
+      return gameSettingsRepo.gameSettings.gameSpeed;
     },
     set(val: GameSpeed) {
       gameSettingsRepo.updateSpeed(val);
@@ -62,7 +59,7 @@ export default class GameOptions extends Vue {
     set(val: boolean) {
       gameSettingsRepo.updateBoundariesLocked(val);
     }
-  })
+  });
 
   gameSpeedSliderOptions = {
     min: 0,
@@ -70,11 +67,6 @@ export default class GameOptions extends Vue {
     format: function(value: number): string {
       return gameSpeedAsString(value as GameSpeed);
     }
-  }
-
-  boundariesLockedToggleOptions = {
-    offLabel: 'No',
-    onLabel: 'Yes'
   }
 
   startGame(): void {
@@ -91,13 +83,6 @@ export default class GameOptions extends Vue {
   --slider-handle-ring-color: #{rgba($color-accent, 0.3)};
   --slider-tooltip-color: #{$color-text};
   --slider-tooltip-font-weight: 300;
-
-  @import '@vueform/toggle/themes/default';
-  --toggle-bg-on: #{$color-accent};
-  --toggle-text-on: #{$color-text};
-  --toggle-border-on: #FFFFFF00;
-  --toggle-border-off: #FFFFFF00;
-  --toggle-width: 5em;
 }
 </style>
 

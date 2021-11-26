@@ -27,7 +27,7 @@ class GameRecordsRepo implements IGameRecordsRepo{
     }
 
     beatsRecord(score: number): boolean {
-        return this.records.some(record => record.score < score);
+        return this.records.some(record => record.score < score) || this.records.length < 5;
     }
     
     insertRecord(score: number, name: string, gameSettings: GameSettings): void {
