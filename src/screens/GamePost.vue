@@ -68,7 +68,7 @@ export default defineComponent({
     var session = gameSessionsRepo.getSession(currentSessionId);
 
     return {
-      session: session
+      session: session as GameSession
     };
   },
   data() {
@@ -98,7 +98,8 @@ export default defineComponent({
     submitRecord(): void {
      if(typeof this.session === undefined || !this.session) return;
      gameRecordsRepo.insertRecord(this.session.score, this.playerName, this.session.gameSettings);
-     this.recordAlreadyHandled = true;
+     gameSessionsRepo.updateSession(this.session.id, undefined, true);
+     this.recordAlreadyHandled = true;     
     },
     startNewGame(): void {
       this.$router.push({name: 'Game'});
@@ -112,14 +113,10 @@ table {
   margin: 1em auto 1em auto;
 }
 
-p{
-  max-width: 600px;
-}
-
 button {
   margin: 1em;
   &.play {
-    margin-top: 2em;
+    margin-top: 0.5em;
   }
 }
 

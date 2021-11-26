@@ -61,6 +61,7 @@ export default defineComponent({
         this.gameLogic.update();
         this.renderer.render();
         this.session.score = this.gameLogic.score;
+        gameSessionsRepo.updateSession(this.session.id, this.gameLogic.score);
       } 
       this.currentAnimationFrame = window.requestAnimationFrame(this.gameCycle);
     },

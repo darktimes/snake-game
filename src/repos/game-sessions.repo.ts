@@ -9,6 +9,7 @@ type SessionMap = {
 export interface IGameSessionsRepo {
     requestNewSession(gameSettings: IGameSettings): GameSession;
     getSession(id: string): IGameSession | undefined;
+    updateSession(id: string, score?: number, recordAlreadyHandled?: boolean): void;
 }
 
 class GameSessionsRepo implements IGameSessionsRepo{
@@ -27,13 +28,25 @@ class GameSessionsRepo implements IGameSessionsRepo{
         const id = uuid();
         const session = new GameSession(id, gameSettings);
         this.sessions[id] = session;
-        localStorage.setItem(this.sessionsStorageKey, JSON.stringify(this.sessions));
+        this.saveSessions();
         return session;
     }
 
     getSession(id: string): IGameSession | undefined {
         return this.sessions[id];
-    }    
+    }
+
+    updateSession(id: string, score?: number, recordAlreadyHandled?: boolean) : void{
+        const session = this.sessions[id];
+        if (session === undefined) return;
+        session.score = score?? session.score;
+        session.recordAlreadyHandled = recordAlreadyHandled ?? session.recordAlreadyHandled;
+        this.saveSessions();
+    }
+
+    private saveSessions(): void {
+        localStorage.setItem(this.sessionsStorageKey, JSON.stringify(this.sessions));
+    }
 }
 
 export const gameSessionsRepo = new GameSessionsRepo() as IGameSessionsRepo;
